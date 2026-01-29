@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="1">
+    <component name="EclipseCodeFormatterProjectSettings">
+        <option name="projectSpecificProfile">
+            <ProjectSpecificProfile>
+                <option name="formatter" value="ECLIPSE" />
+                <option name="pathToConfigFileJava" value="$PROJECT_DIR$/eclipseFormatterConfig.xml" />
+                <option name="selectedJavaProfile" value="HandsOn" />
+            </ProjectSpecificProfile>
+        </option>
+    </component>
+</project>
