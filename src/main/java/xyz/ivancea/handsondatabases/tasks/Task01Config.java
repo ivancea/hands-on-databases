@@ -20,13 +20,13 @@ public class Task01Config implements TaskConfig {
 
     @Override
     public List<CliAction> actions() {
-        return Arrays.asList(new CliAction("storeNumber", "Store a row: storeRow <text>", data -> {
+        return Arrays.asList(new CliAction("storeNumber", "Store a number, passed as --data \"123\"", data -> {
             if (data == null) {
                 throw new IllegalArgumentException("storeRow requires data argument");
             }
 
             Task01.storeNumber(Integer.parseInt(data));
-        }), new CliAction("readNumber", "Read a row: readRow <id>", data -> {
+        }), new CliAction("readNumber", "Reads the stored number", data -> {
             if (data == null) {
                 throw new IllegalArgumentException("readRow requires data argument (id)");
             }
