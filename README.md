@@ -11,6 +11,13 @@ And don't hesitate to throw away the code and start from scratch when starting a
 
 ## Quick Start
 
+### Setup
+
+The recommended IDE is [IntelliJ IDEA](https://www.jetbrains.com/idea/download/).
+It should take care of importing the Gradle project, and downloading the expected JDK.
+
+Also, `gradlew` will take care of the build and dependencies.
+
 ### Running the Application
 
 Use the provided scripts to run the CLI:
