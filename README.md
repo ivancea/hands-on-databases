@@ -42,8 +42,22 @@ Each task is a separate module under `tasks/taskXX/`. To complete a task:
 
 **Example:** Task 01 is located at [tasks/task01/src/main/java/xyz/ivancea/handsondatabases/tasks/task01/Task01.java](tasks/task01/src/main/java/xyz/ivancea/handsondatabases/tasks/task01/Task01.java)
 
+## Solutions
+
+The solutions are available in the branch `solutions`. Feel free to take a look, but always try to solve the tasks yourself first.
+
+Existing solutions are just a reference: there are many ways to implement each task.
+The important part is to understand the concepts and complexity behind each task and solution.
 
 ## Roadmap
+
+### Features
+
+- Provide a module for shared tasks code
+- Tests for each task (Should they be part of the task instead?)
+- Performance tests for each task, checking that the complexity requirements are met
+
+### Tasks
 
 - Store an integer in a file
   _(Basic, no complexity requirements)_
