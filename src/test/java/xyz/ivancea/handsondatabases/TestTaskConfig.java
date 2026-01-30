@@ -10,7 +10,7 @@ import xyz.ivancea.handsondatabases.shared.TaskConfig;
  * @param actionConsumer A consumer that accepts action name and data.
  */
 public record TestTaskConfig(BiConsumer<String, String> actionConsumer) implements TaskConfig {
-    public static final int TASK_ID = -1;
+    public static final int TASK_ID = 111222333;
     public static final String TASK_DISPLAY_NAME = "Test Task";
 
     public static final String ACTION_1_NAME = "action1";
@@ -35,8 +35,8 @@ public record TestTaskConfig(BiConsumer<String, String> actionConsumer) implemen
     @Override
     public List<CliAction> actions() {
         return Arrays.asList(
-            new CliAction(ACTION_1_NAME, ACTION_1_DESCRIPTION, data -> actionConsumer.accept(ACTION_1_NAME, data)),
-            new CliAction(ACTION_2_NAME, ACTION_2_DESCRIPTION, data -> actionConsumer.accept(ACTION_2_NAME, data))
+            new CliAction(ACTION_1_NAME, ACTION_1_DESCRIPTION, (data, _) -> actionConsumer.accept(ACTION_1_NAME, data)),
+            new CliAction(ACTION_2_NAME, ACTION_2_DESCRIPTION, (data, _) -> actionConsumer.accept(ACTION_2_NAME, data))
         );
     }
 }

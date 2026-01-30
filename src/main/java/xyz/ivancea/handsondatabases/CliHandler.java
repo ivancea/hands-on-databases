@@ -1,9 +1,12 @@
 package xyz.ivancea.handsondatabases;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import xyz.ivancea.handsondatabases.shared.CliAction;
 import xyz.ivancea.handsondatabases.shared.TaskConfig;
+import xyz.ivancea.handsondatabases.shared.helpers.FileHelper;
 
 public class CliHandler {
 
@@ -88,24 +91,26 @@ public class CliHandler {
         }
 
         try {
-            action.executor().execute(dataArg);
+            Path dataFolder = Path.of("./data");
+            if (!Files.exists(dataFolder)) {
+                Files.createDirectory(dataFolder);
+            }
+            FileHelper fileHelper = new FileHelper(dataFolder);
+
+            action.executor().execute(dataArg, fileHelper);
         } catch (Exception e) {
-            System.out.println("Action failed: " + e.getMessage());
-            e.printStackTrace(System.out);
+            System.out.println("### Action failed: " + e.getMessage() + "\n");
+            printTaskHelp(task);
         }
     }
 
     private Optional<TaskConfig> findTask(String taskArg) {
-        // try numeric value: match task id first, then index (1-based)
         try {
             int n = Integer.parseInt(taskArg);
-            // first match by task.id()
             for (TaskConfig t : tasks) {
-                if (t.id() == n) return Optional.of(t);
-            }
-            // fallback: treat as 1-based index
-            if (n >= 1 && n <= tasks.size()) {
-                return Optional.of(tasks.get(n - 1));
+                if (t.id() == n) {
+                    return Optional.of(t);
+                }
             }
         } catch (NumberFormatException ignored) {}
         return Optional.empty();

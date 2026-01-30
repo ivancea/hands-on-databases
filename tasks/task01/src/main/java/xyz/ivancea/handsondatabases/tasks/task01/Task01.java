@@ -1,14 +1,18 @@
 package xyz.ivancea.handsondatabases.tasks.task01;
 
-public class Task01 {
+import xyz.ivancea.handsondatabases.shared.Task;
+import xyz.ivancea.handsondatabases.shared.helpers.FileHelper;
 
-    private Task01() {}
+public class Task01 extends Task {
+    public Task01(FileHelper fileHelper) {
+        super(fileHelper);
+    }
 
-    public static void storeNumber(int number) {
+    public void store(int number) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    public static Integer readNumber() {
+    public Integer read() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 }

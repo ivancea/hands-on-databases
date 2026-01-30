@@ -15,23 +15,19 @@ public class Task01Config implements TaskConfig {
 
     @Override
     public String displayName() {
-        return "Task 01 - Basic row storage";
+        return "Store and read a single number";
     }
 
     @Override
     public List<CliAction> actions() {
-        return Arrays.asList(new CliAction("storeNumber", "Store a number, passed as --data \"123\"", data -> {
+        return Arrays.asList(new CliAction("store", "Store a number, passed as --data \"123\"", (data, fileHelper) -> {
             if (data == null) {
-                throw new IllegalArgumentException("storeRow requires data argument");
+                throw new IllegalArgumentException("store requires data argument");
             }
 
-            Task01.storeNumber(Integer.parseInt(data));
-        }), new CliAction("readNumber", "Reads the stored number", data -> {
-            if (data == null) {
-                throw new IllegalArgumentException("readRow requires data argument (id)");
-            }
-
-            Integer response = Task01.readNumber();
+            new Task01(fileHelper).store(Integer.parseInt(data));
+        }), new CliAction("read", "Reads the stored number", (_, fileHelper) -> {
+            Integer response = new Task01(fileHelper).read();
             if (response == null) {
                 System.out.println("No number stored");
             } else {

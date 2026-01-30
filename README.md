@@ -1,0 +1,68 @@
+# Hands-On Databases
+
+A CLI-based learning project for database concepts.
+
+Learn and practice how databases store and query their data
+going through small but focused tasks.
+
+Each task is self-contained and focuses on a specific database concept.
+Feel free to copy implementations or code between the tasks as needed.
+And don't hesitate to throw away the code and start from scratch when starting a new task.
+
+## Quick Start
+
+### Running the Application
+
+Use the provided scripts to run the CLI:
+
+```sh
+# List the available tasks and arguments
+./run.bat
+
+# Describe the options of the task with ID 1
+./run.bat -t 1
+
+# Execute action 'read' of task 1
+./run.bat -t 1 -a read
+
+# Execute action 'store' of task 1 with data "123"
+./run.bat -t 1 -a store -d "123"
+```
+
+### Complete the tasks
+
+Each task is a separate module under `tasks/taskXX/`. To complete a task:
+
+1. Find the task class at `tasks/taskXX/src/main/java/xyz/ivancea/handsondatabases/tasks/taskXX/TaskXX.java`
+2. Implement the available methods
+3. Use the provided `FileHelper` to read/write files.
+   The task will have full control over the given directory, and no other task will access it.
+4. Run the task actions with `./run -t XX -a <action>` to test your implementation. 
+   Different actions may require different data inputs.
+
+**Example:** Task 01 is located at [tasks/task01/src/main/java/xyz/ivancea/handsondatabases/tasks/task01/Task01.java](tasks/task01/src/main/java/xyz/ivancea/handsondatabases/tasks/task01/Task01.java)
+
+
+## Roadmap
+
+- Store an integer in a file
+  _(Basic, no complexity requirements)_
+  - Read the integer
+- Store an array of integers in a file
+  _(Basic, no complexity requirements)_
+  - Append more integers
+  - Read the integers
+- Read an integer at an index
+  _(Do not iterate all the integers)_
+- Search if an integer is present or not
+  _(Do not iterate all the integers)_
+- Multiple tables
+  _(Work with multiple files)_
+- Allow multiple integer columns
+  _(Maintain previous requirements on the primary key)_
+  - Allow marking a column as a primary key, to quickly find it and access the row data. Unique values only?
+- Add columns of other types: boolean and double
+  _(Metadata header or separated file)_
+- Add columns of char[] type, with a fixed length
+- Modify values
+- Add columns of strings with variable length
