@@ -24,16 +24,16 @@ Use the provided scripts to run the CLI:
 
 ```sh
 # List the available tasks and arguments
-./run.bat
+./run
 
 # Describe the options of the task with ID 1
-./run.bat -t 1
+./run -t 1
 
 # Execute action 'read' of task 1
-./run.bat -t 1 -a read
+./run -t 1 -a read
 
 # Execute action 'store' of task 1 with data "123"
-./run.bat -t 1 -a store -d "123"
+./run -t 1 -a store -d "123"
 ```
 
 ### Complete the tasks
@@ -63,6 +63,10 @@ The important part is to understand the concepts and complexity behind each task
 - Provide a module for shared tasks code
 - Tests for each task (Should they be part of the task instead?)
 - Performance tests for each task, checking that the complexity requirements are met
+
+#### Technical
+
+- GitHub workflow to keep the `solutions` branch up to date with `main`
 
 ### Tasks
 
