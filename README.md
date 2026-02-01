@@ -42,8 +42,8 @@ Track your progress as you complete each task:
 
 | Task | Status | Description |
 |------|--------|-------------|
-| Task 01 | ![Task01](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/ivancea/hands-on-databases/gh-badges/task01.json) | Store and read a single number |
-| Task 02 | ![Task02](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/ivancea/hands-on-databases/gh-badges/task02.json) | Store and read an array of integers |
+| Task 01 | ![Task01](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/ivancea/hands-on-databases/gh-badges/task01-main.json) | Store and read a single number |
+| Task 02 | ![Task02](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/ivancea/hands-on-databases/gh-badges/task02-main.json) | Store and read an array of integers |
 
 ### Badge Legend
 - ⚪ **Not Started** - Task implementation not yet begun
@@ -52,7 +52,7 @@ Track your progress as you complete each task:
 
 > **Note for forked repositories:** After forking, update the badge URLs in this README to point to your repository:
 > ```
-> https://raw.githubusercontent.com/ivancea/hands-on-databases/gh-badges/taskXX.json
+> https://raw.githubusercontent.com/YOUR-USERNAME/hands-on-databases/gh-badges/taskXX-main.json
 > ```
 > Badges will automatically update after your first push triggers the workflow.
 
