@@ -52,7 +52,7 @@ Track your progress as you complete each task:
 
 > **Note for forked repositories:** After forking, update the badge URLs in this README to point to your repository:
 > ```
-> https://raw.githubusercontent.com/YOUR-USERNAME/hands-on-databases/gh-badges/taskXX-main.json
+> https://raw.githubusercontent.com/ivancea/hands-on-databases/gh-badges/taskXX-main.json
 > ```
 > Badges will automatically update after your first push triggers the workflow.
 
