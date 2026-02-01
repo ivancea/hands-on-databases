@@ -25,19 +25,28 @@ allprojects {
             endWithNewline()
         }
     }
+
+    // Apply test dependencies to all projects (root and subprojects)
+    plugins.withType<JavaPlugin> {
+        dependencies {
+            testImplementation(platform("org.junit:junit-bom:5.10.0"))
+            testImplementation("org.junit.jupiter:junit-jupiter")
+            testImplementation("org.assertj:assertj-core:3.27.7")
+            testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+        }
+
+        tasks.named<Test>("test") {
+            useJUnitPlatform()
+        }
+    }
 }
 
 dependencies {
-    implementation(project(":shared"))
-    implementation(project(":tasks:task01"))
-    implementation(project(":tasks:task02"))
-
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("org.assertj:assertj-core:3.27.7")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
-
-tasks.test {
-    useJUnitPlatform()
+    // Automatically depend on all task modules
+    // This ensures all task implementations are available to the CLI
+    rootProject.subprojects
+        .filter { it.path.startsWith(":tasks:") }
+        .forEach { taskProject ->
+            implementation(taskProject)
+        }
 }

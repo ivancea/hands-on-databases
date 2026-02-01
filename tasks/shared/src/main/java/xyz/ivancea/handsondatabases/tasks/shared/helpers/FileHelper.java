@@ -1,4 +1,4 @@
-package xyz.ivancea.handsondatabases.shared.helpers;
+package xyz.ivancea.handsondatabases.tasks.shared.helpers;
 
 import java.io.IOException;
 import java.io.InputStream;
