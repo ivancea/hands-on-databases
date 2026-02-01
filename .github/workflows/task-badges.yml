@@ -3,8 +3,6 @@ name: Task Status Badges
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -45,6 +43,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+          cache: 'gradle'
       
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -138,7 +137,7 @@ jobs:
   commit-badges:
     needs: [discover-tasks, test-tasks]
     runs-on: ubuntu-latest
-    if: always() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: always()
     
     steps:
       - uses: actions/checkout@v4
