@@ -48,6 +48,9 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
       
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+      
       - name: Run tests for ${{ matrix.task_id }}
         id: test
         continue-on-error: true
