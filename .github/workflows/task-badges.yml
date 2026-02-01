@@ -2,7 +2,7 @@ name: Task Status Badges
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, solutions ]
   workflow_dispatch:
 
 permissions:
@@ -117,7 +117,11 @@ jobs:
         run: |
           mkdir -p badge-data
           
-          cat > badge-data/${{ matrix.task_id }}.json <<EOF
+          # Include branch name in badge filename
+          BRANCH_NAME="${{ github.ref_name }}"
+          BADGE_FILENAME="${{ matrix.task_id }}-${BRANCH_NAME}.json"
+          
+          cat > badge-data/$BADGE_FILENAME <<EOF
           {
             "schemaVersion": 1,
             "label": "${{ matrix.task_id }}",
@@ -126,15 +130,15 @@ jobs:
           }
           EOF
           
-          echo "Created badge JSON for ${{ matrix.task_id }}:"
-          cat badge-data/${{ matrix.task_id }}.json
+          echo "Created badge JSON for ${{ matrix.task_id }} on branch ${BRANCH_NAME}:"
+          cat badge-data/$BADGE_FILENAME
       
       - name: Upload badge artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: badge-${{ matrix.task_id }}
-          path: badge-data/${{ matrix.task_id }}.json
+          name: badge-${{ matrix.task_id }}-${{ github.ref_name }}
+          path: badge-data/${{ matrix.task_id }}-${{ github.ref_name }}.json
           retention-days: 1
   
   commit-badges:
@@ -172,15 +176,18 @@ jobs:
           
           **Do not modify this branch manually** - it is automatically updated by GitHub Actions.
           
-          ## Files
+          ## File Naming Convention
           
-          - \`taskXX.json\` - Badge data for each task
+          - \`taskXX-BRANCH.json\` - Badge data for each task on specific branch
+            - Example: \`task01-main.json\` - Task01 badge for main branch
+            - Example: \`task01-solutions.json\` - Task01 badge for solutions branch
           
           ## Badge States
           
           - **not started** (grey) - Task not yet implemented
           - **failing** (red) - Tests are failing
           - **passing** (green) - All tests passing
+          - **no tests** (grey) - No test files exist for this task
           EOF
           
           git add README.md
