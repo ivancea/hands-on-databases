@@ -30,6 +30,7 @@ allprojects {
 dependencies {
     implementation(project(":shared"))
     implementation(project(":tasks:task01"))
+    implementation(project(":tasks:task02"))
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

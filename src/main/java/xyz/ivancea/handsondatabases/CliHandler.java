@@ -21,6 +21,7 @@ public class CliHandler {
         String taskArg = null;
         String actionArg = null;
         String dataArg = null;
+        boolean showTips = false;
 
         for (int i = 0; i < (args == null ? 0 : args.length); i++) {
             String a = args[i];
@@ -43,6 +44,9 @@ public class CliHandler {
                         dataArg = args[++i];
                     }
                     break;
+                case "--tips":
+                    showTips = true;
+                    break;
                 default:
                     // ignore unknown tokens for now
             }
@@ -63,6 +67,13 @@ public class CliHandler {
         }
 
         TaskConfig task = taskOpt.get();
+
+        if (showTips) {
+            // Show tips for the task
+            printTaskTips(task);
+            return;
+        }
+
         if (actionArg == null) {
             // show task help
             printTaskHelp(task);
@@ -117,11 +128,12 @@ public class CliHandler {
     }
 
     private void printGeneralHelp() {
-        System.out.println("Usage: --task <id> --action <name> [--data <data>]\n");
+        System.out.println("Usage: --task <id> --action <name> [--data <data>] [--tips]\n");
         System.out.println("Options:");
         System.out.println("  --task, -t <id>   Select a task by id");
         System.out.println("  --action, -a <name>   Choose an action exposed by the task");
         System.out.println("  --data, -d <data>     Optional string data passed to the action");
+        System.out.println("  --tips                Show tips for the selected task");
         System.out.println();
         printAvailable();
     }
@@ -131,6 +143,18 @@ public class CliHandler {
         System.out.println("Available actions:");
         for (CliAction a : task.actions()) {
             System.out.println("  " + a.name() + " - " + a.description());
+        }
+    }
+
+    private void printTaskTips(TaskConfig task) {
+        System.out.println("Task: id=" + task.id() + " " + task.displayName());
+        if (task.tips() == null || task.tips().isEmpty()) {
+            System.out.println("No tips available for this task.");
+        } else {
+            System.out.println("Tips:");
+            for (String tip : task.tips()) {
+                System.out.println("  - " + tip);
+            }
         }
     }
 

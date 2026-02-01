@@ -19,6 +19,16 @@ public class Task01Config implements TaskConfig {
     }
 
     @Override
+    public List<String> tips() {
+        return List.of(
+            "Use fileHelper.create(fileName) to create a new file",
+            "Use fileHelper.write(fileName) to get an OutputStream for writing to the file",
+            "Use fileHelper.read(fileName) to get an InputStream for reading the file",
+            "Use fileHelper.open(fileName) to get a FileChannel for reading and writing"
+        );
+    }
+
+    @Override
     public List<CliAction> actions() {
         return Arrays.asList(new CliAction("store", "Store a number, passed as --data \"123\"", (data, fileHelper) -> {
             if (data == null) {
