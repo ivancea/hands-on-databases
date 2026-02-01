@@ -1,0 +1,224 @@
+name: Task Status Badges
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  discover-tasks:
+    runs-on: ubuntu-latest
+    outputs:
+      task_ids: ${{ steps.parse.outputs.task_ids }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Parse settings.gradle.kts for task modules
+        id: parse
+        run: |
+          # Extract task module names from settings.gradle.kts
+          # Example: include("tasks:task01") -> task01
+          TASKS=$(grep 'include("tasks:task' settings.gradle.kts | \
+                  sed -E 's/.*include\("tasks:(task[0-9]+)"\).*/\1/' | \
+                  jq -R -s -c 'split("\n")[:-1]')
+          echo "task_ids=$TASKS" >> $GITHUB_OUTPUT
+          echo "Found tasks: $TASKS"
+  
+  test-tasks:
+    needs: discover-tasks
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        task_id: ${{ fromJson(needs.discover-tasks.outputs.task_ids) }}
+      fail-fast: false
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      
+      - name: Run tests for ${{ matrix.task_id }}
+        id: test
+        continue-on-error: true
+        run: |
+          ./gradlew :tasks:${{ matrix.task_id }}:test --no-daemon
+      
+      - name: Parse test results
+        id: results
+        if: always()
+        run: |
+          XML_FILE=$(find tasks/${{ matrix.task_id }}/build/test-results/test/ -name "TEST-*.xml" 2>/dev/null | head -1)
+          
+          if [ -z "$XML_FILE" ] || [ ! -f "$XML_FILE" ]; then
+            # No test file means no tests exist for this task
+            echo "status=no-tests" >> $GITHUB_OUTPUT
+            echo "message=no tests" >> $GITHUB_OUTPUT
+            echo "color=lightgrey" >> $GITHUB_OUTPUT
+            echo "Task ${{ matrix.task_id }}: No tests found"
+            exit 0
+          fi
+          
+          # Parse XML to get test counts using sed (more portable than grep -P)
+          TOTAL=$(sed -n 's/.*tests="\([0-9]*\)".*/\1/p' "$XML_FILE" | head -1)
+          SKIPPED=$(sed -n 's/.*skipped="\([0-9]*\)".*/\1/p' "$XML_FILE" | head -1)
+          FAILURES=$(sed -n 's/.*failures="\([0-9]*\)".*/\1/p' "$XML_FILE" | head -1)
+          ERRORS=$(sed -n 's/.*errors="\([0-9]*\)".*/\1/p' "$XML_FILE" | head -1)
+          
+          # Default to 0 if not found
+          TOTAL=${TOTAL:-0}
+          SKIPPED=${SKIPPED:-0}
+          FAILURES=${FAILURES:-0}
+          ERRORS=${ERRORS:-0}
+          
+          # Determine status
+          if [ "$TOTAL" -eq 0 ]; then
+            STATUS="no-tests"
+            MESSAGE="no tests"
+            COLOR="lightgrey"
+          elif [ "$SKIPPED" -eq "$TOTAL" ]; then
+            # All tests skipped = not started
+            STATUS="not-started"
+            MESSAGE="not started"
+            COLOR="lightgrey"
+          elif [ "$FAILURES" -eq 0 ] && [ "$ERRORS" -eq 0 ]; then
+            # No failures = passing
+            STATUS="passing"
+            MESSAGE="passing"
+            COLOR="brightgreen"
+          else
+            # Has failures = failing
+            STATUS="failing"
+            MESSAGE="failing"
+            COLOR="red"
+          fi
+          
+          echo "status=$STATUS" >> $GITHUB_OUTPUT
+          echo "message=$MESSAGE" >> $GITHUB_OUTPUT
+          echo "color=$COLOR" >> $GITHUB_OUTPUT
+          
+          echo "Task ${{ matrix.task_id }}: $STATUS (total=$TOTAL, skipped=$SKIPPED, failures=$FAILURES, errors=$ERRORS)"
+      
+      - name: Create badge JSON
+        if: always()
+        run: |
+          mkdir -p badge-data
+          
+          cat > badge-data/${{ matrix.task_id }}.json <<EOF
+          {
+            "schemaVersion": 1,
+            "label": "${{ matrix.task_id }}",
+            "message": "${{ steps.results.outputs.message }}",
+            "color": "${{ steps.results.outputs.color }}"
+          }
+          EOF
+          
+          echo "Created badge JSON for ${{ matrix.task_id }}:"
+          cat badge-data/${{ matrix.task_id }}.json
+      
+      - name: Upload badge artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: badge-${{ matrix.task_id }}
+          path: badge-data/${{ matrix.task_id }}.json
+          retention-days: 1
+  
+  commit-badges:
+    needs: [discover-tasks, test-tasks]
+    runs-on: ubuntu-latest
+    if: always() && github.event_name == 'push'
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Check if gh-badges branch exists
+        id: check_branch
+        run: |
+          if git ls-remote --heads origin gh-badges | grep gh-badges; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Create orphan gh-badges branch
+        if: steps.check_branch.outputs.exists == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git checkout --orphan gh-badges
+          git rm -rf .
+          
+          cat > README.md <<EOF
+          # Badge Data
+          
+          This branch contains JSON files used to generate status badges for each task.
+          
+          **Do not modify this branch manually** - it is automatically updated by GitHub Actions.
+          
+          ## Files
+          
+          - \`taskXX.json\` - Badge data for each task
+          
+          ## Badge States
+          
+          - **not started** (grey) - Task not yet implemented
+          - **failing** (red) - Tests are failing
+          - **passing** (green) - All tests passing
+          EOF
+          
+          git add README.md
+          git commit -m "Initialize gh-badges branch"
+          git push origin gh-badges
+      
+      - name: Switch to gh-badges branch
+        run: |
+          git fetch origin gh-badges:gh-badges
+          git checkout gh-badges
+      
+      - name: Download all badge artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: badge-*
+          path: badges
+          merge-multiple: true
+      
+      - name: Commit badge updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Move badge files to root
+          if [ -d badges ]; then
+            mv badges/*.json . 2>/dev/null || true
+            rm -rf badges
+          fi
+          
+          # List badge files
+          echo "Badge files:"
+          ls -la *.json 2>/dev/null || echo "No badge files found"
+          
+          # Check if there are changes
+          git add *.json 2>/dev/null || true
+          
+          if git diff --cached --quiet; then
+            echo "No badge changes to commit"
+            exit 0
+          fi
+          
+          git commit -m "Update badges for ${{ github.ref_name }} @ ${{ github.sha }}"
+          git push origin gh-badges
