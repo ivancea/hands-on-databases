@@ -1,0 +1,48 @@
+name: Update README Badge URLs
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/update-readme-badges.yml'
+      - 'README.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-badges:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Update badge URLs for this repository
+        id: update
+        run: |
+          OWNER="${{ github.repository_owner }}"
+          REPO="${{ github.event.repository.name }}"
+          
+          echo "Updating badges for: $OWNER/$REPO"
+          
+          # Update README.md badge URLs
+          # Replace any existing github.com URLs with current repo
+          sed -i "s|https://raw.githubusercontent.com/[^/]*/[^/]*/gh-badges/|https://raw.githubusercontent.com/$OWNER/$REPO/gh-badges/|g" README.md
+          
+          # Check if anything changed
+          if git diff --quiet README.md; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes needed - badges already point to this repository"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Badge URLs updated to point to $OWNER/$REPO"
+          fi
+      
+      - name: Commit updated badge URLs
+        if: steps.update.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Update badge URLs for ${{ github.repository }}"
+          git push

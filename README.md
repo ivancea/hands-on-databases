@@ -36,6 +36,26 @@ Use the provided scripts to run the CLI:
 ./run -t 1 -a store -d "123"
 ```
 
+## Task Progress
+
+Track your progress as you complete each task:
+
+| Task | Status | Description |
+|------|--------|-------------|
+| Task 01 | ![Task01](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/ivancea/hands-on-databases/gh-badges/task01.json) | Store and read a single number |
+| Task 02 | ![Task02](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/ivancea/hands-on-databases/gh-badges/task02.json) | Store and read an array of integers |
+
+### Badge Legend
+- ⚪ **Not Started** - Task implementation not yet begun
+- 🔴 **Failing** - Tests are failing (implementation incomplete or incorrect)
+- 🟢 **Passing** - All tests passing!
+
+> **Note for forked repositories:** After forking, update the badge URLs in this README to point to your repository:
+> ```
+> https://raw.githubusercontent.com/YOUR-USERNAME/hands-on-databases/gh-badges/taskXX.json
+> ```
+> Badges will automatically update after your first push triggers the workflow.
+
 ### Complete the tasks
 
 Each task is a separate module under `tasks/taskXX/`. To complete a task:
