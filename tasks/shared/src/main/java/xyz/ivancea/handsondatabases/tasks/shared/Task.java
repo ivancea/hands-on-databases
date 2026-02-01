@@ -1,6 +1,6 @@
-package xyz.ivancea.handsondatabases.shared;
+package xyz.ivancea.handsondatabases.tasks.shared;
 
-import xyz.ivancea.handsondatabases.shared.helpers.FileHelper;
+import xyz.ivancea.handsondatabases.tasks.shared.helpers.FileHelper;
 
 public abstract class Task {
     protected final FileHelper fileHelper;

@@ -1,7 +1,7 @@
 package xyz.ivancea.handsondatabases.tasks.task01;
 
-import xyz.ivancea.handsondatabases.shared.Task;
-import xyz.ivancea.handsondatabases.shared.helpers.FileHelper;
+import xyz.ivancea.handsondatabases.tasks.shared.Task;
+import xyz.ivancea.handsondatabases.tasks.shared.helpers.FileHelper;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

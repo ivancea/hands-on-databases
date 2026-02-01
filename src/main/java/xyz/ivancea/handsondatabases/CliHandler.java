@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import xyz.ivancea.handsondatabases.shared.CliAction;
 import xyz.ivancea.handsondatabases.shared.TaskConfig;
-import xyz.ivancea.handsondatabases.shared.helpers.FileHelper;
+import xyz.ivancea.handsondatabases.tasks.shared.helpers.FileHelper;
 
 public class CliHandler {
 

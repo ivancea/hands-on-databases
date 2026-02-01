@@ -7,6 +7,6 @@ dependencyResolutionManagement {
     }
 }
 
-include("shared")
+include("tasks:shared")
 include("tasks:task01")
 include("tasks:task02")

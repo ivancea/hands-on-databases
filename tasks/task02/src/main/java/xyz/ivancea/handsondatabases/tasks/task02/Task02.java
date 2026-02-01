@@ -1,8 +1,8 @@
 package xyz.ivancea.handsondatabases.tasks.task02;
 
 import java.util.List;
-import xyz.ivancea.handsondatabases.shared.Task;
-import xyz.ivancea.handsondatabases.shared.helpers.FileHelper;
+import xyz.ivancea.handsondatabases.tasks.shared.Task;
+import xyz.ivancea.handsondatabases.tasks.shared.helpers.FileHelper;
 
 public class Task02 extends Task {
     public Task02(FileHelper fileHelper) {
