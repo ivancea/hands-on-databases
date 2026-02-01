@@ -8,4 +8,6 @@ public interface TaskConfig {
     String displayName();
 
     List<CliAction> actions();
+
+    List<String> tips();
 }

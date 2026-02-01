@@ -1,7 +1,6 @@
 package xyz.ivancea.handsondatabases;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.HashSet;
 import java.util.List;
@@ -22,9 +21,7 @@ public class TasksRegistryTest {
         List<TaskConfig> tasks = TasksRegistry.getAll();
         Set<Integer> seenIds = new HashSet<>();
         for (TaskConfig task : tasks) {
-            assertThat(seenIds.add(task.id()))
-                .withFailMessage("Duplicate task ID found: " + task.id())
-                .isTrue();
+            assertThat(seenIds.add(task.id())).withFailMessage("Duplicate task ID found: " + task.id()).isTrue();
         }
     }
 }

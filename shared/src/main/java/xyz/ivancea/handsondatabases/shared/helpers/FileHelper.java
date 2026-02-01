@@ -2,8 +2,10 @@ package xyz.ivancea.handsondatabases.shared.helpers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
@@ -46,11 +48,15 @@ public record FileHelper(Path directory) {
         }
     }
 
+    public FileChannel open(String fileName) throws IOException {
+        return FileChannel.open(resolve(fileName), StandardOpenOption.READ, StandardOpenOption.WRITE);
+    }
+
     public InputStream read(String fileName) throws IOException {
         return Files.newInputStream(resolve(fileName));
     }
 
-    public FileChannel open(String fileName) throws IOException {
-        return FileChannel.open(resolve(fileName), StandardOpenOption.READ, StandardOpenOption.WRITE);
+    public OutputStream write(String fileName, OpenOption... options) throws IOException {
+        return Files.newOutputStream(resolve(fileName), options);
     }
 }

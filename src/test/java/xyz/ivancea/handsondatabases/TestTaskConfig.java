@@ -39,4 +39,9 @@ public record TestTaskConfig(BiConsumer<String, String> actionConsumer) implemen
             new CliAction(ACTION_2_NAME, ACTION_2_DESCRIPTION, (data, _) -> actionConsumer.accept(ACTION_2_NAME, data))
         );
     }
+
+    @Override
+    public List<String> tips() {
+        return List.of("Test tip 1", "Test tip 2");
+    }
 }

@@ -38,12 +38,13 @@ public class CliHandlerTest {
     private static Stream<Arguments> outputCases() {
         return Stream.of(
             Arguments.of("", """
-                Usage: --task <id> --action <name> [--data <data>]
+                Usage: --task <id> --action <name> [--data <data>] [--tips]
 
                 Options:
                   --task, -t <id>   Select a task by id
                   --action, -a <name>   Choose an action exposed by the task
                   --data, -d <data>     Optional string data passed to the action
+                  --tips                Show tips for the selected task
 
                 Available tasks:
                   1) id=%d - %s
@@ -114,7 +115,13 @@ public class CliHandlerTest {
             Arguments.of(
                 "--task " + TestTaskConfig.TASK_ID + " --action " + TestTaskConfig.ACTION_2_NAME,
                 "%s:null".formatted(TestTaskConfig.ACTION_2_NAME)
-            )
+            ),
+            Arguments.of("--task " + TestTaskConfig.TASK_ID + " --tips", """
+                Task: id=%d %s
+                Tips:
+                  - Test tip 1
+                  - Test tip 2
+                """.formatted(TestTaskConfig.TASK_ID, TestTaskConfig.TASK_DISPLAY_NAME))
         );
     }
 
