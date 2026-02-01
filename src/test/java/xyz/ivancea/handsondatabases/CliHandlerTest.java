@@ -49,7 +49,7 @@ public class CliHandlerTest {
                   1) id=%d - %s
                 """.formatted(TestTaskConfig.TASK_ID, TestTaskConfig.TASK_DISPLAY_NAME)),
             Arguments.of(
-                "--task 1",
+                "--task " + TestTaskConfig.TASK_ID,
                 """
                     Task: id=%d %s
                     Available actions:
@@ -81,11 +81,11 @@ public class CliHandlerTest {
                 )
             ),
             Arguments.of(
-                "--task 1 --action " + TestTaskConfig.ACTION_1_NAME + " --data hello",
+                "--task " + TestTaskConfig.TASK_ID + " --action " + TestTaskConfig.ACTION_1_NAME + " --data hello",
                 "%s:hello".formatted(TestTaskConfig.ACTION_1_NAME)
             ),
             Arguments.of(
-                "--task 1 --action " + TestTaskConfig.ACTION_1_NAME + " --data \"hello world\"",
+                "--task " + TestTaskConfig.TASK_ID + " --action " + TestTaskConfig.ACTION_1_NAME + " --data \"hello world\"",
                 "%s:hello world".formatted(TestTaskConfig.ACTION_1_NAME)
             ),
             Arguments.of("--task unknown", """
@@ -94,7 +94,7 @@ public class CliHandlerTest {
                   1) id=%d - %s
                 """.formatted(TestTaskConfig.TASK_ID, TestTaskConfig.TASK_DISPLAY_NAME)),
             Arguments.of(
-                "--task 1 --action doesnotexist",
+                "--task " + TestTaskConfig.TASK_ID + " --action doesnotexist",
                 """
                     Unknown action for task '%d': doesnotexist
                     Task: id=%d %s
@@ -111,7 +111,10 @@ public class CliHandlerTest {
                     TestTaskConfig.ACTION_2_DESCRIPTION
                 )
             ),
-            Arguments.of("--task 1 --action " + TestTaskConfig.ACTION_2_NAME, "%s:null".formatted(TestTaskConfig.ACTION_2_NAME))
+            Arguments.of(
+                "--task " + TestTaskConfig.TASK_ID + " --action " + TestTaskConfig.ACTION_2_NAME,
+                "%s:null".formatted(TestTaskConfig.ACTION_2_NAME)
+            )
         );
     }
 
