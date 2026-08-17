@@ -42,11 +42,12 @@ allprojects {
 }
 
 dependencies {
-    // Automatically depend on all task modules
-    // This ensures all task implementations are available to the CLI
+    implementation(project(":shared"))
+
+    // Make all exercise and solution implementations available to the CLI.
     rootProject.subprojects
-        .filter { it.path.startsWith(":tasks:") }
-        .forEach { taskProject ->
-            implementation(taskProject)
+        .filter { it.path.startsWith(":tasks:") || it.path.startsWith(":solutions:") }
+        .forEach { implementationProject ->
+            implementation(implementationProject)
         }
 }

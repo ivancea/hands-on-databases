@@ -4,9 +4,12 @@ import java.util.Arrays;
 import java.util.List;
 import xyz.ivancea.handsondatabases.shared.CliAction;
 import xyz.ivancea.handsondatabases.shared.TaskConfig;
+import xyz.ivancea.handsondatabases.shared.helpers.FileHelper;
+import xyz.ivancea.handsondatabases.shared.tasks.task01.Task01Operations;
+import xyz.ivancea.handsondatabases.solutions.task01.Task01SolutionAdapter;
 import xyz.ivancea.handsondatabases.tasks.task01.Task01;
 
-public class Task01Config implements TaskConfig {
+public class Task01Config implements TaskConfig<Task01Operations> {
 
     @Override
     public int id() {
@@ -29,15 +32,25 @@ public class Task01Config implements TaskConfig {
     }
 
     @Override
-    public List<CliAction> actions() {
-        return Arrays.asList(new CliAction("store", "Store a number, passed as --data \"123\"", (data, fileHelper) -> {
+    public Task01Operations getTask(FileHelper fileHelper) {
+        return new Task01(fileHelper);
+    }
+
+    @Override
+    public Task01Operations getSolution(FileHelper fileHelper) {
+        return new Task01SolutionAdapter(fileHelper);
+    }
+
+    @Override
+    public List<CliAction<Task01Operations>> actions() {
+        return Arrays.asList(new CliAction<>("store", "Store a number, passed as --data \"123\"", (data, task) -> {
             if (data == null) {
                 throw new IllegalArgumentException("store requires data argument");
             }
 
-            new Task01(fileHelper).store(Integer.parseInt(data));
-        }), new CliAction("read", "Reads the stored number", (_, fileHelper) -> {
-            Integer response = new Task01(fileHelper).read();
+            task.store(Integer.parseInt(data));
+        }), new CliAction<>("read", "Reads the stored number", (_, task) -> {
+            Integer response = task.read();
             if (response == null) {
                 System.out.println("No number stored");
             } else {

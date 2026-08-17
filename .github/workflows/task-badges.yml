@@ -2,7 +2,7 @@ name: Task Status Badges
 
 on:
   push:
-    branches: [ main, solutions ]
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -55,13 +55,13 @@ jobs:
         id: test
         continue-on-error: true
         run: |
-          ./gradlew :tasks:${{ matrix.task_id }}:test --no-daemon
+          ./gradlew :tests:${{ matrix.task_id }}:exerciseTest --no-daemon
       
       - name: Parse test results
         id: results
         if: always()
         run: |
-          XML_FILE=$(find tasks/${{ matrix.task_id }}/build/test-results/test/ -name "TEST-*.xml" 2>/dev/null | head -1)
+          XML_FILE=$(find tests/${{ matrix.task_id }}/build/test-results/exerciseTest/ -name "TEST-*.xml" 2>/dev/null | head -1)
           
           if [ -z "$XML_FILE" ] || [ ! -f "$XML_FILE" ]; then
             # No test file means no tests exist for this task
@@ -180,7 +180,6 @@ jobs:
           
           - \`taskXX-BRANCH.json\` - Badge data for each task on specific branch
             - Example: \`task01-main.json\` - Task01 badge for main branch
-            - Example: \`task01-solutions.json\` - Task01 badge for solutions branch
           
           ## Badge States
           

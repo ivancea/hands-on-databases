@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Optional;
 import xyz.ivancea.handsondatabases.shared.CliAction;
 import xyz.ivancea.handsondatabases.shared.TaskConfig;
-import xyz.ivancea.handsondatabases.tasks.shared.helpers.FileHelper;
+import xyz.ivancea.handsondatabases.shared.helpers.FileHelper;
 
 public class CliHandler {
 
-    private final List<TaskConfig> tasks;
+    private final List<TaskConfig<?>> tasks;
 
-    public CliHandler(List<TaskConfig> tasks) {
+    public CliHandler(List<TaskConfig<?>> tasks) {
         this.tasks = tasks;
     }
 
@@ -22,6 +22,7 @@ public class CliHandler {
         String actionArg = null;
         String dataArg = null;
         boolean showTips = false;
+        boolean useSolution = false;
 
         for (int i = 0; i < (args == null ? 0 : args.length); i++) {
             String a = args[i];
@@ -47,6 +48,9 @@ public class CliHandler {
                 case "--tips":
                     showTips = true;
                     break;
+                case "--solution":
+                    useSolution = true;
+                    break;
                 default:
                     // ignore unknown tokens for now
             }
@@ -59,14 +63,14 @@ public class CliHandler {
         }
 
         // find task: support numeric index (1-based) or id match
-        Optional<TaskConfig> taskOpt = findTask(taskArg);
+        Optional<TaskConfig<?>> taskOpt = findTask(taskArg);
         if (!taskOpt.isPresent()) {
             System.out.println("Unknown task: " + taskArg);
             printAvailable();
             return;
         }
 
-        TaskConfig task = taskOpt.get();
+        TaskConfig<?> task = taskOpt.get();
 
         if (showTips) {
             // Show tips for the task
@@ -80,45 +84,47 @@ public class CliHandler {
             return;
         }
 
-        // find action
-        CliAction found = null;
-        for (CliAction act : task.actions()) {
-            if (act.name().equals(actionArg)) {
-                found = act;
+        executeAction(task, actionArg, dataArg, useSolution);
+    }
+
+    private <T> void executeAction(TaskConfig<T> task, String actionArg, String dataArg, boolean useSolution) {
+        CliAction<T> found = null;
+        for (CliAction<T> action : task.actions()) {
+            if (action.name().equals(actionArg)) {
+                found = action;
                 break;
             }
         }
-        Optional<CliAction> actionOpt = Optional.ofNullable(found);
-        if (!actionOpt.isPresent()) {
+
+        if (found == null) {
             System.out.println("Unknown action for task '" + task.id() + "': " + actionArg);
             printTaskHelp(task);
             return;
         }
 
-        CliAction action = actionOpt.get();
-        if (action.executor() == null) {
+        if (found.executor() == null) {
             System.out.println("Action '" + actionArg + "' not implemented.");
             return;
         }
 
         try {
-            Path dataFolder = Path.of("./data");
-            if (!Files.exists(dataFolder)) {
-                Files.createDirectory(dataFolder);
-            }
+            String implementationFolder = useSolution ? "solution" : "exercise";
+            Path dataFolder = Path.of("./data", implementationFolder, "task%02d".formatted(task.id()));
+            Files.createDirectories(dataFolder);
             FileHelper fileHelper = new FileHelper(dataFolder);
+            T implementation = useSolution ? task.getSolution(fileHelper) : task.getTask(fileHelper);
 
-            action.executor().execute(dataArg, fileHelper);
+            found.executor().execute(dataArg, implementation);
         } catch (Exception e) {
             System.out.println("### Action failed: " + e.getMessage() + "\n");
             printTaskHelp(task);
         }
     }
 
-    private Optional<TaskConfig> findTask(String taskArg) {
+    private Optional<TaskConfig<?>> findTask(String taskArg) {
         try {
             int n = Integer.parseInt(taskArg);
-            for (TaskConfig t : tasks) {
+            for (TaskConfig<?> t : tasks) {
                 if (t.id() == n) {
                     return Optional.of(t);
                 }
@@ -128,25 +134,27 @@ public class CliHandler {
     }
 
     private void printGeneralHelp() {
-        System.out.println("Usage: --task <id> --action <name> [--data <data>] [--tips]\n");
+        System.out.println("Usage: --task <id> [--action <name> [--data <data>] | --test] [--tips] [--solution]\n");
         System.out.println("Options:");
         System.out.println("  --task, -t <id>   Select a task by id");
         System.out.println("  --action, -a <name>   Choose an action exposed by the task");
         System.out.println("  --data, -d <data>     Optional string data passed to the action");
+        System.out.println("  --test                Run the selected task's contract tests");
         System.out.println("  --tips                Show tips for the selected task");
+        System.out.println("  --solution            Run the reference implementation");
         System.out.println();
         printAvailable();
     }
 
-    private void printTaskHelp(TaskConfig task) {
+    private void printTaskHelp(TaskConfig<?> task) {
         System.out.println("Task: id=" + task.id() + " " + task.displayName());
         System.out.println("Available actions:");
-        for (CliAction a : task.actions()) {
+        for (CliAction<?> a : task.actions()) {
             System.out.println("  " + a.name() + " - " + a.description());
         }
     }
 
-    private void printTaskTips(TaskConfig task) {
+    private void printTaskTips(TaskConfig<?> task) {
         System.out.println("Task: id=" + task.id() + " " + task.displayName());
         if (task.tips() == null || task.tips().isEmpty()) {
             System.out.println("No tips available for this task.");
@@ -161,7 +169,7 @@ public class CliHandler {
     private void printAvailable() {
         System.out.println("Available tasks:");
         for (int i = 0; i < tasks.size(); i++) {
-            TaskConfig t = tasks.get(i);
+            TaskConfig<?> t = tasks.get(i);
             System.out.println("  " + (i + 1) + ") id=" + t.id() + " - " + t.displayName());
         }
     }

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
@@ -38,13 +39,15 @@ public class CliHandlerTest {
     private static Stream<Arguments> outputCases() {
         return Stream.of(
             Arguments.of("", """
-                Usage: --task <id> --action <name> [--data <data>] [--tips]
+                Usage: --task <id> [--action <name> [--data <data>] | --test] [--tips] [--solution]
 
                 Options:
                   --task, -t <id>   Select a task by id
                   --action, -a <name>   Choose an action exposed by the task
                   --data, -d <data>     Optional string data passed to the action
+                  --test                Run the selected task's contract tests
                   --tips                Show tips for the selected task
+                  --solution            Run the reference implementation
 
                 Available tasks:
                   1) id=%d - %s
@@ -169,5 +172,41 @@ public class CliHandlerTest {
             new String[] { "--task", String.valueOf(TestTaskConfig.TASK_ID), "--action", TestTaskConfig.ACTION_1_NAME, "--data", "payload" }
         );
         assertThat(called.get()).isEqualTo(TestTaskConfig.ACTION_1_NAME + ":payload");
+    }
+
+    @Test
+    public void testSolutionSelectsSolutionImplementation() {
+        AtomicReference<String> selected = new AtomicReference<>();
+        TestTaskConfig cfg = new TestTaskConfig((_, _) -> {}, (implementation, _) -> selected.set(implementation));
+        CliHandler cli = new CliHandler(List.of(cfg));
+
+        cli.handle(
+            new String[] { "--task", String.valueOf(TestTaskConfig.TASK_ID), "--action", TestTaskConfig.ACTION_1_NAME, "--solution" }
+        );
+
+        assertThat(selected.get()).isEqualTo("solution");
+    }
+
+    @Test
+    public void testExerciseAndSolutionUseSeparateDataFolders() {
+        AtomicReference<Path> exerciseFolder = new AtomicReference<>();
+        AtomicReference<Path> solutionFolder = new AtomicReference<>();
+        TestTaskConfig cfg = new TestTaskConfig((_, _) -> {}, (implementation, fileHelper) -> {
+            if (implementation.equals("solution")) {
+                solutionFolder.set(fileHelper.directory());
+            } else {
+                exerciseFolder.set(fileHelper.directory());
+            }
+        });
+        CliHandler cli = new CliHandler(List.of(cfg));
+        String[] actionArgs = { "--task", String.valueOf(TestTaskConfig.TASK_ID), "--action", TestTaskConfig.ACTION_1_NAME };
+
+        cli.handle(actionArgs);
+        cli.handle(
+            new String[] { "--task", String.valueOf(TestTaskConfig.TASK_ID), "--action", TestTaskConfig.ACTION_1_NAME, "--solution" }
+        );
+
+        assertThat(exerciseFolder.get()).endsWith(Path.of("data", "exercise", "task" + TestTaskConfig.TASK_ID));
+        assertThat(solutionFolder.get()).endsWith(Path.of("data", "solution", "task" + TestTaskConfig.TASK_ID));
     }
 }

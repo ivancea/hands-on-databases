@@ -34,7 +34,18 @@ Use the provided scripts to run the CLI:
 
 # Execute action 'store' of task 1 with data "123"
 ./run -t 1 -a store -d "123"
+
+# Execute the same action with the reference solution
+./run -t 1 -a store -d "123" --solution
+
+# Test your implementation against the task contract
+./run --test --task 1
+
+# Test the reference solution against the same contract
+./run --test --task 1 --solution
 ```
+
+Exercise and solution data are kept separately under `data/exercise/taskXX/` and `data/solution/taskXX/`.
 
 ## Task Progress
 
@@ -61,32 +72,30 @@ Track your progress as you complete each task:
 Each task is a separate module under `tasks/taskXX/`. To complete a task:
 
 1. Find the task class at `tasks/taskXX/src/main/java/xyz/ivancea/handsondatabases/tasks/taskXX/TaskXX.java`
-2. Implement the available methods
+2. Implement the methods defined by the task's operations interface under `shared/src/main/java/xyz/ivancea/handsondatabases/shared/tasks/taskXX/`
 3. Use the provided `FileHelper` to read/write files.
    The task will have full control over the given directory, and no other task will access it.
-4. Run the task actions with `./run -t XX -a <action>` to test your implementation. 
+4. Run the task actions with `./run -t XX -a <action>` and its tests with `./run --test --task XX`.
    Different actions may require different data inputs.
 
 **Example:** Task 01 is located at [tasks/task01/src/main/java/xyz/ivancea/handsondatabases/tasks/task01/Task01.java](tasks/task01/src/main/java/xyz/ivancea/handsondatabases/tasks/task01/Task01.java)
 
 ## Solutions
 
-The solutions are available in the branch `solutions`. Feel free to take a look, but always try to solve the tasks yourself first.
+Reference solutions are available in the modules under `solutions/`. Feel free to take a look, but always try to solve the tasks yourself first.
+
+Use `./run -t XX -a <action> --solution` to run an action with its reference implementation.
 
 Existing solutions are just a reference: there are many ways to implement each task.
 The important part is to understand the concepts and complexity behind each task and solution.
+
+`./gradlew test` runs each available contract suite against both the exercise and solution implementations.
 
 ## Roadmap
 
 ### Features
 
-- Provide a module for shared tasks code
-- Tests for each task (Should they be part of the task instead?)
 - Performance tests for each task, checking that the complexity requirements are met
-
-#### Technical
-
-- GitHub workflow to keep the `solutions` branch up to date with `main`
 
 ### Tasks
 

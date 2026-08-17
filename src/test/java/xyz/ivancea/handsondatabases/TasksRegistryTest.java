@@ -12,15 +12,15 @@ public class TasksRegistryTest {
 
     @Test
     public void testGetAll_hasTasks() {
-        List<TaskConfig> tasks = TasksRegistry.getAll();
+        List<TaskConfig<?>> tasks = TasksRegistry.getAll();
         assertThat(tasks).isNotEmpty();
     }
 
     @Test
     public void testGetAll_hasNoRepeatedTaskIds() {
-        List<TaskConfig> tasks = TasksRegistry.getAll();
+        List<TaskConfig<?>> tasks = TasksRegistry.getAll();
         Set<Integer> seenIds = new HashSet<>();
-        for (TaskConfig task : tasks) {
+        for (TaskConfig<?> task : tasks) {
             assertThat(seenIds.add(task.id())).withFailMessage("Duplicate task ID found: " + task.id()).isTrue();
         }
     }

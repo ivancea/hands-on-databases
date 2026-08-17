@@ -8,12 +8,9 @@ subprojects {
     group = "xyz.ivancea"
     version = "1.0-SNAPSHOT"
 
-    // Only task implementation modules (not shared itself) depend on :tasks:shared
-    if (name != "shared") {
-        plugins.withType<JavaPlugin> {
-            dependencies {
-                "implementation"(project(":tasks:shared"))
-            }
+    plugins.withType<JavaPlugin> {
+        dependencies {
+            "implementation"(project(":shared"))
         }
     }
 }

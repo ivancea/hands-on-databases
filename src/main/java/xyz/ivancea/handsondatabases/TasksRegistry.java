@@ -8,7 +8,7 @@ import xyz.ivancea.handsondatabases.tasks.Task02Config;
 public class TasksRegistry {
     private TasksRegistry() {}
 
-    public static List<TaskConfig> getAll() {
+    public static List<TaskConfig<?>> getAll() {
         return List.of(new Task01Config(), new Task02Config());
     }
 }
