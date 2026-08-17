@@ -28,6 +28,10 @@ allprojects {
 
     // Apply test dependencies to all projects (root and subprojects)
     plugins.withType<JavaPlugin> {
+        extensions.configure<JavaPluginExtension> {
+            toolchain.languageVersion.set(JavaLanguageVersion.of(25))
+        }
+
         dependencies {
             testImplementation(platform("org.junit:junit-bom:5.10.0"))
             testImplementation("org.junit.jupiter:junit-jupiter")
@@ -48,6 +52,6 @@ dependencies {
     rootProject.subprojects
         .filter { it.path.startsWith(":tasks:") || it.path.startsWith(":solutions:") }
         .forEach { implementationProject ->
-            implementation(implementationProject)
+            implementation(project(implementationProject.path))
         }
 }

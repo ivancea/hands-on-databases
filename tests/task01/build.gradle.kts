@@ -21,11 +21,11 @@ fun Test.configureContractTest(implementation: String) {
     }
 }
 
-val exerciseTest by tasks.registering(Test::class) {
+val exerciseTest = tasks.register<Test>("exerciseTest") {
     configureContractTest("exercise")
 }
 
-val solutionTest by tasks.registering(Test::class) {
+val solutionTest = tasks.register<Test>("solutionTest") {
     configureContractTest("solution")
 }
 

@@ -14,9 +14,9 @@ And don't hesitate to throw away the code and start from scratch when starting a
 ### Setup
 
 The recommended IDE is [IntelliJ IDEA](https://www.jetbrains.com/idea/download/).
-It should take care of importing the Gradle project, and downloading the expected JDK.
-
-Also, `gradlew` will take care of the build and dependencies.
+Open the project and wait for the Gradle import to finish.
+For terminal use, `java --version` must report Java 17 or newer.
+The Gradle wrapper downloads Gradle, Java 25, and all project dependencies automatically.
 
 ### Running the Application
 
@@ -54,20 +54,23 @@ Exercise and solution data are kept separately under `data/exercise/taskXX/` and
 
 Track your progress as you complete each task:
 
-| Task | Status | Description |
-|------|--------|-------------|
-| Task 01 | ![Task01](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/ivancea/hands-on-databases/gh-badges/task01-main.json) | Store and read a single number |
+| Task    | Status                                                                                                                                 | Description                         |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| Task 01 | ![Task01](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/ivancea/hands-on-databases/gh-badges/task01-main.json) | Store and read a single number      |
 | Task 02 | ![Task02](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/ivancea/hands-on-databases/gh-badges/task02-main.json) | Store and read an array of integers |
 
 ### Badge Legend
+
 - ⚪ **Not Implemented** - Task has not been implemented
 - 🔴 **Failing** - Tests are failing (implementation incomplete or incorrect)
 - 🟢 **Passing** - All tests passing!
 
 > **Note for forked repositories:** After forking, update the badge URLs in this README to point to your repository:
+>
 > ```
 > https://raw.githubusercontent.com/ivancea/hands-on-databases/gh-badges/taskXX-main.json
 > ```
+>
 > Badges will automatically update after your first push triggers the workflow.
 
 ### Complete the tasks
