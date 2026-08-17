@@ -48,8 +48,23 @@ if not defined TASK_ID (
   echo --test requires --task ^<id^>
   endlocal & exit /b 1
 )
-set "TASK_MODULE=task%TASK_ID%"
-if "%TASK_ID:~1,1%"=="" set "TASK_MODULE=task0%TASK_ID%"
+echo(!TASK_ID!| %SystemRoot%\System32\findstr.exe /r /x "[0-9][0-9]*" >nul
+if errorlevel 1 (
+  echo Invalid task ID: !TASK_ID!
+  endlocal & exit /b 1
+)
+
+set "NORMALIZED_TASK_ID=!TASK_ID!"
+:strip_leading_zero
+if "!NORMALIZED_TASK_ID!"=="0" goto task_id_normalized
+if not "!NORMALIZED_TASK_ID:~0,1!"=="0" goto task_id_normalized
+set "NORMALIZED_TASK_ID=!NORMALIZED_TASK_ID:~1!"
+goto strip_leading_zero
+
+:task_id_normalized
+set "TASK_ID=!NORMALIZED_TASK_ID!"
+set "TASK_MODULE=task!TASK_ID!"
+if "!TASK_ID:~1,1!"=="" set "TASK_MODULE=task0!TASK_ID!"
 if not exist "tests\%TASK_MODULE%\build.gradle.kts" (
   echo No tests available for task %TASK_ID%
   endlocal & exit /b 1

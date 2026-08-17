@@ -57,5 +57,5 @@ Add your new task configuration to the `TasksRegistry` class in [TasksRegistry.j
 Run your task using the provided scripts:
 
 ```sh
-./run -t XX -a action-name
+./run.sh -t XX -a action-name
 ```

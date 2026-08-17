@@ -55,6 +55,11 @@ jobs:
         id: test
         continue-on-error: true
         run: |
+          if [ ! -f tests/${{ matrix.task_id }}/build.gradle.kts ]; then
+            echo "No tests configured for ${{ matrix.task_id }}"
+            exit 0
+          fi
+
           ./gradlew :tests:${{ matrix.task_id }}:exerciseTest --no-daemon
       
       - name: Parse test results
@@ -63,12 +68,19 @@ jobs:
         run: |
           XML_FILE=$(find tests/${{ matrix.task_id }}/build/test-results/exerciseTest/ -name "TEST-*.xml" 2>/dev/null | head -1)
           
-          if [ -z "$XML_FILE" ] || [ ! -f "$XML_FILE" ]; then
-            # No test file means no tests exist for this task
+          if [ ! -f tests/${{ matrix.task_id }}/build.gradle.kts ]; then
             echo "status=no-tests" >> $GITHUB_OUTPUT
             echo "message=no tests" >> $GITHUB_OUTPUT
             echo "color=lightgrey" >> $GITHUB_OUTPUT
-            echo "Task ${{ matrix.task_id }}: No tests found"
+            echo "Task ${{ matrix.task_id }}: No tests configured"
+            exit 0
+          fi
+
+          if [ -z "$XML_FILE" ] || [ ! -f "$XML_FILE" ]; then
+            echo "status=failing" >> $GITHUB_OUTPUT
+            echo "message=failing" >> $GITHUB_OUTPUT
+            echo "color=red" >> $GITHUB_OUTPUT
+            echo "Task ${{ matrix.task_id }}: Test execution failed before producing results"
             exit 0
           fi
           
@@ -90,9 +102,9 @@ jobs:
             MESSAGE="no tests"
             COLOR="lightgrey"
           elif [ "$SKIPPED" -eq "$TOTAL" ]; then
-            # All tests skipped = not started
-            STATUS="not-started"
-            MESSAGE="not started"
+            # All tests skipped = not implemented
+            STATUS="not-implemented"
+            MESSAGE="not implemented"
             COLOR="lightgrey"
           elif [ "$FAILURES" -eq 0 ] && [ "$ERRORS" -eq 0 ]; then
             # No failures = passing
@@ -183,7 +195,7 @@ jobs:
           
           ## Badge States
           
-          - **not started** (grey) - Task not yet implemented
+          - **not implemented** (grey) - Task has not been implemented
           - **failing** (red) - Tests are failing
           - **passing** (green) - All tests passing
           - **no tests** (grey) - No test files exist for this task

@@ -11,7 +11,7 @@ import xyz.ivancea.handsondatabases.shared.helpers.FileHelper;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class TaskOperationsTestCase<T> {
-    protected T task;
+    private FileHelper fileHelper;
 
     @BeforeAll
     protected void checkImplementation(@TempDir Path implementationCheckDirectory) throws Exception {
@@ -19,9 +19,9 @@ public abstract class TaskOperationsTestCase<T> {
             return;
         }
 
-        T implementation = createTask(new FileHelper(implementationCheckDirectory));
+        fileHelper = new FileHelper(implementationCheckDirectory);
         try {
-            doCheckImplementation(implementation);
+            doCheckImplementation(task());
         } catch (UnsupportedOperationException e) {
             assumeTrue(false, "Task not implemented - skipping exercise tests");
         } catch (Exception ignored) {
@@ -31,14 +31,24 @@ public abstract class TaskOperationsTestCase<T> {
 
     @BeforeEach
     protected void setUpTask(@TempDir Path tempDir) {
-        task = createTask(new FileHelper(tempDir));
+        fileHelper = new FileHelper(tempDir);
     }
 
-    /** Creates the implementation under test. */
+    /** Creates a new selected implementation under test. */
+    protected final T task() {
+        return switch (implementation()) {
+            case "exercise" -> createTask(fileHelper);
+            case "solution" -> createSolution(fileHelper);
+            default -> throw new IllegalStateException("Unknown test implementation: " + implementation());
+        };
+    }
+
     protected abstract T createTask(FileHelper fileHelper);
 
+    protected abstract T createSolution(FileHelper fileHelper);
+
     /** Calls every operation once to ensure it is implemented. */
-    protected abstract void doCheckImplementation(T task) throws Exception;
+    protected abstract void doCheckImplementation(T implementation) throws Exception;
 
     protected final String implementation() {
         return System.getProperty("implementation", "exercise");

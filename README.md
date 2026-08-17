@@ -22,27 +22,30 @@ Also, `gradlew` will take care of the build and dependencies.
 
 Use the provided scripts to run the CLI:
 
+- Linux and macOS: `./run.sh`
+- Windows: `.\run.bat`
+
 ```sh
 # List the available tasks and arguments
-./run
+./run.sh
 
 # Describe the options of the task with ID 1
-./run -t 1
+./run.sh -t 1
 
 # Execute action 'read' of task 1
-./run -t 1 -a read
+./run.sh -t 1 -a read
 
 # Execute action 'store' of task 1 with data "123"
-./run -t 1 -a store -d "123"
+./run.sh -t 1 -a store -d "123"
 
 # Execute the same action with the reference solution
-./run -t 1 -a store -d "123" --solution
+./run.sh -t 1 -a store -d "123" --solution
 
 # Test your implementation against the task contract
-./run --test --task 1
+./run.sh --test --task 1
 
 # Test the reference solution against the same contract
-./run --test --task 1 --solution
+./run.sh --test --task 1 --solution
 ```
 
 Exercise and solution data are kept separately under `data/exercise/taskXX/` and `data/solution/taskXX/`.
@@ -57,7 +60,7 @@ Track your progress as you complete each task:
 | Task 02 | ![Task02](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/ivancea/hands-on-databases/gh-badges/task02-main.json) | Store and read an array of integers |
 
 ### Badge Legend
-- ⚪ **Not Started** - Task implementation not yet begun
+- ⚪ **Not Implemented** - Task has not been implemented
 - 🔴 **Failing** - Tests are failing (implementation incomplete or incorrect)
 - 🟢 **Passing** - All tests passing!
 
@@ -75,7 +78,7 @@ Each task is a separate module under `tasks/taskXX/`. To complete a task:
 2. Implement the methods defined by the task's operations interface under `shared/src/main/java/xyz/ivancea/handsondatabases/shared/tasks/taskXX/`
 3. Use the provided `FileHelper` to read/write files.
    The task will have full control over the given directory, and no other task will access it.
-4. Run the task actions with `./run -t XX -a <action>` and its tests with `./run --test --task XX`.
+4. Run the task actions with `./run.sh -t XX -a <action>` and its tests with `./run.sh --test --task XX`.
    Different actions may require different data inputs.
 
 **Example:** Task 01 is located at [tasks/task01/src/main/java/xyz/ivancea/handsondatabases/tasks/task01/Task01.java](tasks/task01/src/main/java/xyz/ivancea/handsondatabases/tasks/task01/Task01.java)
@@ -84,7 +87,7 @@ Each task is a separate module under `tasks/taskXX/`. To complete a task:
 
 Reference solutions are available in the modules under `solutions/`. Feel free to take a look, but always try to solve the tasks yourself first.
 
-Use `./run -t XX -a <action> --solution` to run an action with its reference implementation.
+Use `./run.sh -t XX -a <action> --solution` to run an action with its reference implementation.
 
 Existing solutions are just a reference: there are many ways to implement each task.
 The important part is to understand the concepts and complexity behind each task and solution.
